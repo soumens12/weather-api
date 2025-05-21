@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: antiquewhite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: url("https://c.wallhere.com/photos/ea/95/1400x875_px_Bay_blue_clouds_Evening_landscape_Lights_nature-699412.jpg!d");
+            background-size: cover;
+            background-position: center;
+            font-family: "Inter", sans-serif;
+        }
+
+        .weather-container {
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            background-color: rgba(7, 7, 7, 0.103);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            color: #fff;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .weather-container h2 {
+            margin-bottom: 25px;
+        }
+
+        .weather-icon {
+            width: 100px;
+            height: 100px;
+            display: block;
+            object-fit: contain;
+        }
+
+        .temp {
+            font-size: 70px;
+            font-weight: bold;
+            margin-top: 25px;
+        }
+
+        .city {
+            font-size: 30px;
+        }
+
+        .details {
+            display: flex;
+            width: 100%;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .searchBox {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            position: relative;
+            background-color: #fff;
+            border-radius: 50px;
+            margin-bottom: 20px;
+        }
+
+        .searchBox #searchInput {
+            min-width: 250px;
+            height: 48px;
+            border: none;
+            flex: 1;
+            padding-left: 20px;
+            border-radius: 50px;
+        }
+
+        .searchBox #searchInput:focus {
+            border: none;
+            box-shadow: none;
+            outline: 0;
+        }
+
+        #searchBtn {
+            border-radius: 30px;
+            padding: 10px 15px;
+            position: absolute;
+            right: 10px;
+            top: 5px;
+            background-color: #d2511e;
+            color: #fff;
+            border: 1px solid #d2511e;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="weather-container">
+        <div class="searchBox">
+            <input type="text" id="searchInput">
+            <button id="searchBtn">Search</button>
+        </div>
+        <h2>Today's Weather</h2>
+        <img src="city.png" class="weather-icon" id="cityImg" alt="">
+
+        <div class="temp">City Temp</div>
+        <div> <span class="city">City Name</span>, <span class="country"><small>Country</small></span></div>
+        <div>
+            <p><small class="desc">Weather Description</small></p>
+        </div>
+
+        <div class="details">
+            <div>
+                <img src="" alt="">
+                <p class="humidity">50%</p>
+            </div>
+            <div>
+                <img src="" alt="">
+                <p class="wind">15km/hour</p>
+            </div>
+        </div>
+    </div>
+    <script>
+        let apiKey = "9bdc96623b3d63a869ab7e3974d78bd3";
+        let apiUrl = "https://api.openweathermap.org/data/2.5/weather?&units=metric&q=";
+
+        let searchInput = document.getElementById("searchInput")
+        let searchBtn = document.getElementById("searchBtn")
+        let cityImg = document.getElementById("cityImg")
+
+        async function weatherGet(city) {
+            let response = await fetch(apiUrl + city + `&appid=${apiKey}`);
+            let data = await response.json();
+            console.log(data);
+            document.querySelector(".temp").innerHTML = Math.round(data.main.temp) + "°C";
+            document.querySelector(".city").innerHTML = data.name;
+            document.querySelector(".humidity").innerHTML = data.main.humidity + "%";
+            document.querySelector(".wind").innerHTML = data.wind.speed + "KM/H";
+            document.querySelector(".desc").innerHTML = data.weather[0].main;
+            document.querySelector(".country").innerHTML = data.sys.country;
+            if (data.weather[0].main === "Thunderstorm") {
+                cityImg.src = "thunderstrom.png";
+            } else if (data.weather[0].main === "Clouds") {
+                cityImg.src = "cloud.png";
+            }
+            else if (data.weather[0].main === "Snow") {
+                cityImg.src = "snowy.png";
+            }
+            else if (data.weather[0].main === "Clear") {
+                cityImg.src = "sunny.png";
+            }
+            else if (data.weather[0].main === "Rain") {
+                cityImg.src = "rainy-day.png";
+            }
+
+        }
+
+        searchBtn.addEventListener("click", () => {
+            weatherGet(searchInput.value);
+        })
+        searchInput.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+                weatherGet(searchInput.value);
+            }
+        })
+
+    </script>
+</body>
+
+
+</html>
